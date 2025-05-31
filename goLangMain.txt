@@ -1,0 +1,12 @@
+go mod init github.com/ldhose/budTerm
+slices.Sort(array)
+result := [][]int{}, result = append(result, entry[:])
+
+https://stackoverflow.com/questions/38081807/for-loop-of-two-variables-in-go
+i,j = 1, 2
+
+To import types in packages, we have to import it by giving the module name followed by folder name
+    Example
+        Say this project is github.com/ldhose/budTerm
+        I want to import from a folder called examples
+        then I would have to import github.com/ldhose/budTerm/examples
