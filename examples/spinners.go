@@ -4,15 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
 var (
-	customLits = list.New()
-	spinners   = []spinner.Spinner{
+	spinners = []spinner.Spinner{
 		spinner.Line,
 		spinner.Dot,
 		spinner.MiniDot,

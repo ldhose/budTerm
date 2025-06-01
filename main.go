@@ -1,10 +1,9 @@
 package main
 
 import (
-	ex "github.com/ldhose/budTerm/examples"
+	task "github.com/ldhose/budTerm/task"
 )
 
 func main() {
-	ex.StartSpinner()
-	ex.StartScreen()
+	task.StartTask()
 }
