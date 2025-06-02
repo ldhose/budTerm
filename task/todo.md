@@ -1,0 +1,6 @@
+- [ ] Pause and Restart timer.
+- [ ] Handle timer completion. Store the timer details to a file
+- [ ] Set up timer modes(first use a single one) -> (25, 5, 30), (45, 15).
+- [ ] How to cycle through the modes. 
+- [ ] How to switch a timer
+- [ ] How to start a new task
