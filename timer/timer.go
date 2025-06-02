@@ -48,6 +48,7 @@ type Model struct {
 	ID       uint16
 	tag      uint16
 	duration uint16
+	name     string
 	state    int
 }
 
@@ -76,10 +77,10 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
 	case tea.KeyMsg:
-		switch msg.String() {
-		case "s":
+		switch msg.Type {
+		case tea.KeyCtrlP:
 			m.state = Paused
-		case "q":
+		case tea.KeyCtrlC:
 			return m, tea.Quit
 		}
 	case TickMsg:
