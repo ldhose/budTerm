@@ -47,17 +47,24 @@ type Model struct {
 	//All time are in seconds
 	ID       uint16
 	tag      uint16
-	duration uint16
+	counter  uint16
 	name     string
 	state    int
+	duration uint16
+}
+
+func (m *Model) Reset() {
+	m.counter = m.duration
+	m.state = Running
 }
 
 func NewTimer(timeout uint16, id uint16) Model {
 	return Model{
 		ID:       id,
 		tag:      id,
-		duration: timeout,
+		counter:  timeout,
 		state:    Focus,
+		duration: timeout,
 	}
 }
 
@@ -78,27 +85,33 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch msg.Type {
-		case tea.KeyCtrlP:
-			m.state = Paused
+		case tea.KeyCtrlS:
+			if m.state == Paused {
+				m.state = Running
+				break
+			}
+			if m.state == Running {
+				m.state = Paused
+				break
+			}
 		case tea.KeyCtrlC:
 			return m, tea.Quit
 		}
+		return m, tea.Batch(m.tick(), m.finished())
 	case TickMsg:
 		if msg.ID != 0 && msg.ID != m.ID {
 			return m, nil
 		}
-		if msg.Finished || m.state == Paused {
+		if msg.Finished {
 			break
 		}
 		if m.state == Paused {
 			break
 		}
-
-		if m.duration <= 0 {
+		if m.counter <= 0 {
 			break
 		}
-
-		m.duration -= 1
+		m.counter -= 1
 		return m, tea.Batch(m.tick(), m.finished())
 	}
 
@@ -107,10 +120,10 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 func (m Model) View() string {
 	if m.state == Finished {
-
+		return keywordStyle.Render(("__ : __"))
 	}
-	min := m.duration / 60
-	sec := m.duration % 60
+	min := m.counter / 60
+	sec := m.counter % 60
 	result := fmt.Sprintf("%02d : %02d", min, sec)
 	return keywordStyle.Render(result)
 }
@@ -129,7 +142,16 @@ func (m Model) finished() tea.Cmd {
 }
 
 func (m Model) Finished() bool {
-	return m.duration <= 0
+	return m.counter <= 0
+}
+
+func (m *Model) Toggle() {
+	if m.state == Paused {
+		m.state = Running
+	}
+	if m.state == Running {
+		m.state = Paused
+	}
 }
 
 func (m Model) tick() tea.Cmd {

@@ -51,9 +51,16 @@ func (m TaskModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.tagsModel.Focus()
 		case "ctrl+q":
 			return m, tea.Quit
-		case "ctrl+r": // rest
+		case "ctrl+l": // rest
 			return m, cmd
 		case "ctrl+b": // break
+			return m, cmd
+		case "alt+p":
+			m.timerModel.Toggle()
+			return m, cmd
+
+		case "ctrl+r":
+			m.timerModel.Reset()
 			return m, cmd
 		case " ":
 			var cmd tea.Cmd
@@ -119,7 +126,7 @@ func (m TaskModel) Trap() string {
 }
 
 func StartTask() {
-	newTimer := timer.NewTimer(20, 1)
+	newTimer := timer.NewTimer(10, 1)
 	newTag := textinput.New()
 
 	if _, err := tea.
