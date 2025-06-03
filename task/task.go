@@ -45,6 +45,8 @@ func (m TaskModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.timerModel, cmd = m.timerModel.Update(msg)
 	cmds = append(cmds, cmd)
 	switch msg := msg.(type) {
+	case timer.TimeoutMsg:
+		// log.Println("Timer has finished running")
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "tab":
@@ -55,10 +57,6 @@ func (m TaskModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 		case "ctrl+b": // break
 			return m, cmd
-		case "alt+p":
-			m.timerModel.Toggle()
-			return m, cmd
-
 		case "ctrl+r":
 			m.timerModel.Reset()
 			return m, cmd
@@ -126,7 +124,7 @@ func (m TaskModel) Trap() string {
 }
 
 func StartTask() {
-	newTimer := timer.NewTimer(10, 1)
+	newTimer := timer.NewTimer(20, 1)
 	newTag := textinput.New()
 
 	if _, err := tea.

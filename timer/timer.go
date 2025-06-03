@@ -63,7 +63,7 @@ func NewTimer(timeout uint16, id uint16) Model {
 		ID:       id,
 		tag:      id,
 		counter:  timeout,
-		state:    Focus,
+		state:    Running,
 		duration: timeout,
 	}
 }
@@ -82,7 +82,6 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
-
 	case tea.KeyMsg:
 		switch msg.Type {
 		case tea.KeyCtrlS:
@@ -94,10 +93,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.state = Paused
 				break
 			}
-		case tea.KeyCtrlC:
-			return m, tea.Quit
+			return m, tea.Batch(m.tick())
 		}
-		return m, tea.Batch(m.tick(), m.finished())
 	case TickMsg:
 		if msg.ID != 0 && msg.ID != m.ID {
 			return m, nil
@@ -112,9 +109,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			break
 		}
 		m.counter -= 1
-		return m, tea.Batch(m.tick(), m.finished())
+		return m, tea.Batch(m.tick())
 	}
-
 	return m, nil
 }
 
@@ -130,15 +126,6 @@ func (m Model) View() string {
 
 type TimeoutMsg struct {
 	ID uint16
-}
-
-func (m Model) finished() tea.Cmd {
-	if !m.Finished() {
-		return nil
-	}
-	return func() tea.Msg {
-		return TimeoutMsg{ID: m.ID}
-	}
 }
 
 func (m Model) Finished() bool {
