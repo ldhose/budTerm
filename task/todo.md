@@ -1,4 +1,5 @@
 - [x] Pause and Restart timer.
+- [ ] Fix start and pause timer bug.
 - [ ] Handle timer completion. Store the timer details to a file
 - [ ] Set up timer modes(first use a single one) -> (25, 5, 30), (45, 15).
 - [ ] How to cycle through the modes. 

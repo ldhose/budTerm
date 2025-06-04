@@ -53,11 +53,6 @@ type Model struct {
 	duration uint16
 }
 
-func (m *Model) Reset() {
-	m.counter = m.duration
-	m.state = Running
-}
-
 func NewTimer(timeout uint16, id uint16) Model {
 	return Model{
 		ID:       id,
@@ -82,19 +77,6 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyCtrlS:
-			if m.state == Paused {
-				m.state = Running
-				break
-			}
-			if m.state == Running {
-				m.state = Paused
-				break
-			}
-			return m, tea.Batch(m.tick())
-		}
 	case TickMsg:
 		if msg.ID != 0 && msg.ID != m.ID {
 			return m, nil
@@ -135,16 +117,24 @@ func (m Model) Finished() bool {
 func (m *Model) Toggle() {
 	if m.state == Paused {
 		m.state = Running
-	}
-	if m.state == Running {
+	} else if m.state == Running {
 		m.state = Paused
 	}
 }
 
+func (m *Model) Reset() {
+	m.counter = m.duration
+	m.state = Running
+}
+
 func (m Model) tick() tea.Cmd {
 	return tea.Tick(time.Second, func(_ time.Time) tea.Msg {
-		return TickMsg{ID: m.ID, tag: m.tag, Finished: m.Finished()}
+		return m.TickMsg()
 	})
+}
+
+func (m Model) TickMsg() TickMsg {
+	return TickMsg{ID: m.ID, tag: m.tag, Finished: m.Finished()}
 }
 
 type TickMsg struct {

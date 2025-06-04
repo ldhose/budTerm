@@ -49,17 +49,22 @@ func (m TaskModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// log.Println("Timer has finished running")
 	case tea.KeyMsg:
 		switch msg.String() {
+		case "ctrl+s":
+			m.timerModel.Toggle()
+			m.timerModel, cmd = m.timerModel.Update(m.timerModel.TickMsg())
+			cmds = append(cmds, cmd)
+			return m, tea.Batch(cmds...)
 		case "tab":
 			m.tagsModel.Focus()
 		case "ctrl+q":
 			return m, tea.Quit
 		case "ctrl+l": // rest
-			return m, cmd
+			return m, tea.Batch(cmds...)
 		case "ctrl+b": // break
-			return m, cmd
+			return m, tea.Batch(cmds...)
 		case "ctrl+r":
 			m.timerModel.Reset()
-			return m, cmd
+			return m, tea.Batch(cmds...)
 		case " ":
 			var cmd tea.Cmd
 			if m.fullScreen {
@@ -68,7 +73,8 @@ func (m TaskModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				cmd = tea.EnterAltScreen
 			}
 			m.fullScreen = !m.fullScreen
-			return m, cmd
+			cmds = append(cmds, cmd)
+			return m, tea.Batch(cmds...)
 		case "enter":
 
 			input := m.tagsModel.Value()
