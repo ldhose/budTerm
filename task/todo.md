@@ -1,7 +1,8 @@
 - [x] Pause and Restart timer.
 - [x] Fix start and pause timer bug.
 - [x] Handle timer completion. Store the timer details to a file
-- [ ] Start timer with a name
+- [x] Start timer with a name
+- [ ] Restart timer app on new command from text box
 - [ ] Set up timer modes(first use a single one) -> (25, 5, 30), (45, 15).
 - [ ] How to cycle through the modes. 
 - [ ] How to switch a timer
