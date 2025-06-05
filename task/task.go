@@ -3,6 +3,7 @@ package task
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
@@ -114,7 +115,20 @@ func processInput(input string, m *TaskModel) {
 
 func execute(command instruction, m *TaskModel) {
 	//TODO store info to file after processing.
-	store.Append(command.name)
+	value, err := strconv.ParseUint(command.value, 10, 8)
+	if err == nil {
+		if command.name != "" {
+
+			m.timerModel = timer.NewTimer(uint16(value), 1, command.name)
+			newTask := TaskModel{
+				timerModel: m.timerModel,
+				tagsModel:  m.tagsModel,
+				name:       command.name,
+			}
+			StartTask(newTask)
+			store.Append(command.name)
+		}
+	}
 }
 
 func (m TaskModel) View() string {
@@ -129,18 +143,31 @@ func (m TaskModel) Trap() string {
 	return "trap"
 }
 
-func StartTask() {
-	newTimer := timer.NewTimer(20, 1)
+func StartNewTask() {
+	// newTimer := timer.NewTimer(20, 1, msg)
 	newTag := textinput.New()
 
 	if _, err := tea.
 		NewProgram(
 			TaskModel{
-				timerModel: newTimer,
-				tagsModel:  newTag},
+				// name:       msg,
+				// timerModel: newTimer,
+				tagsModel: newTag},
 			tea.WithAltScreen()).
 		Run(); err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
+}
+
+func StartTask(task TaskModel) {
+	if _, err := tea.
+		NewProgram(
+			task,
+			tea.WithAltScreen()).
+		Run(); err != nil {
+		fmt.Println("Error running program:", err)
+		os.Exit(1)
+	}
+
 }

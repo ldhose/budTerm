@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	task.StartTask()
+	task.StartNewTask()
 }

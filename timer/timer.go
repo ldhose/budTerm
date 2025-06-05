@@ -3,10 +3,12 @@ package timer
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	store "github.com/ldhose/budTerm/task/storage"
 )
 
 var (
@@ -46,17 +48,17 @@ var stateName = map[int]string{
 type Model struct {
 	//All time are in seconds
 	ID       uint16
-	tag      uint16
+	tag      string
 	counter  uint16
 	name     string
 	state    int
 	duration uint16
 }
 
-func NewTimer(timeout uint16, id uint16) Model {
+func NewTimer(timeout uint16, id uint16, msg string) Model {
 	return Model{
 		ID:       id,
-		tag:      id,
+		tag:      msg,
 		counter:  timeout,
 		state:    Running,
 		duration: timeout,
@@ -82,6 +84,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			return m, nil
 		}
 		if msg.Finished {
+			store.Append(m.tag + ":" + strconv.FormatUint(uint64(m.duration), 10))
 			break
 		}
 		if m.state == Paused {
@@ -134,7 +137,7 @@ func (m Model) tick() tea.Cmd {
 }
 
 func (m Model) TickMsg() TickMsg {
-	return TickMsg{ID: m.ID, tag: m.tag, Finished: m.Finished()}
+	return TickMsg{ID: m.ID, tag: m.ID, Finished: m.Finished()}
 }
 
 type TickMsg struct {
