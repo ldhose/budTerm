@@ -66,23 +66,11 @@ func (m TaskModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+r":
 			m.timerModel.Reset()
 			return m, tea.Batch(cmds...)
-		case " ":
-			var cmd tea.Cmd
-			if m.fullScreen {
-				cmd = tea.ExitAltScreen
-			} else {
-				cmd = tea.EnterAltScreen
-			}
-			m.fullScreen = !m.fullScreen
-			cmds = append(cmds, cmd)
-			return m, tea.Batch(cmds...)
 		case "enter":
-
 			input := m.tagsModel.Value()
 			processInput(input, &m)
 			m.name = input
 			m.tagsModel.Reset()
-			m.tagsModel.Blur()
 		}
 	}
 
@@ -118,7 +106,8 @@ func execute(command instruction, m *TaskModel) {
 	value, err := strconv.ParseUint(command.value, 10, 8)
 	if err == nil {
 		if command.name != "" {
-
+			m.tagsModel.Reset()
+			m.tagsModel.Blur()
 			m.timerModel = timer.NewTimer(uint16(value), 1, command.name)
 			newTask := TaskModel{
 				timerModel: m.timerModel,
@@ -129,6 +118,14 @@ func execute(command instruction, m *TaskModel) {
 			store.Append(command.name)
 		}
 	}
+}
+
+func Nothing(result string) {
+
+}
+
+func (m TaskModel) Finished() bool {
+	return m.timerModel.Finished()
 }
 
 func (m TaskModel) View() string {
@@ -143,7 +140,7 @@ func (m TaskModel) Trap() string {
 	return "trap"
 }
 
-func StartNewTask() {
+func StartApp() {
 	// newTimer := timer.NewTimer(20, 1, msg)
 	newTag := textinput.New()
 

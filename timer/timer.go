@@ -101,11 +101,17 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 func (m Model) View() string {
 	if m.state == Finished {
-		return keywordStyle.Render(("__ : __"))
+		return keywordStyle.Render(m.name + "\n" + "__ : __")
+	}
+
+	if m.counter == 0 {
+		result := lipgloss.JoinVertical(lipgloss.Left, m.tag, "__ : __")
+		return keywordStyle.Render(result)
 	}
 	min := m.counter / 60
 	sec := m.counter % 60
 	result := fmt.Sprintf("%02d : %02d", min, sec)
+	result = lipgloss.JoinVertical(lipgloss.Left, m.tag, result)
 	return keywordStyle.Render(result)
 }
 
