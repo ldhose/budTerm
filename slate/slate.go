@@ -48,5 +48,5 @@ func (m Model) View() string {
 }
 
 func (m Model) Init() tea.Cmd {
-
+	return tea.ClearScreen
 }
