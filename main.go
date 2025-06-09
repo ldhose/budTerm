@@ -1,9 +1,9 @@
 package main
 
 import (
-	task "github.com/ldhose/budTerm/task"
+	"github.com/ldhose/budTerm/slate"
 )
 
 func main() {
-	task.StartApp()
+	slate.StartApp()
 }
